@@ -1,0 +1,19 @@
+name: Publish Yarn libs
+description: Publish project artifacts using Yarn.
+
+inputs:
+  project-type:
+    required: false
+    default: singlerepo
+    description: Is `monorepo` or `singlerepo` project.
+runs:
+  using: composite
+  steps:
+    - run: yarn install --immutable --inline-builds
+      shell: bash
+    - run: yarn workspaces foreach --topological-dev --since='HEAD~1' npm publish --tolerate-republish
+      shell: bash
+      if: inputs.project-type == 'monorepo'
+    - run: yarn npm publish --tolerate-republish
+      shell: bash
+      if: inputs.project-type == 'singlerepo'

@@ -1,0 +1,100 @@
+name: Yarn Single Project for Automations
+
+on:
+  workflow_dispatch:
+    inputs:
+      runs-on:
+        required: false
+        type: string
+        default: ubuntu-latest
+        description: Which machine will be used for jobs.
+      is-self-hosted:
+        required: false
+        type: boolean
+        default: false
+        description: Is it self-hosted machine?
+      needs-release:
+        required: false
+        type: boolean
+        default: true
+        description: Needs to perform release flow.
+      node-version:
+        required: false
+        type: string
+        default: "20.x"
+        description: Which node.js version will be used.
+      npm-token-key:
+        required: false
+        type: string
+        default: NPM_AUTH_TOKEN
+        description: The name of secret npm token key.
+      npm-registry:
+        required: false
+        type: string
+        default: https://npm.pkg.github.com
+        description: Private NPM registry.
+  workflow_call:
+    inputs:
+      runs-on:
+        required: false
+        type: string
+        default: ubuntu-latest
+        description: Which machine will be used for jobs.
+      is-self-hosted:
+        required: false
+        type: boolean
+        default: false
+        description: Is it self-hosted machine?
+      needs-release:
+        required: false
+        type: boolean
+        default: true
+        description: Needs to perform release flow.
+      node-version:
+        required: false
+        type: string
+        default: "20.x"
+        description: Which node.js version will be used.
+      npm-token-key:
+        required: false
+        type: string
+        default: NPM_AUTH_TOKEN
+        description: The name of secret npm token key.
+      npm-registry:
+        required: false
+        type: string
+        default: https://npm.pkg.github.com
+        description: Private NPM registry.
+
+jobs:
+  release:
+    if: inputs.needs-release
+    runs-on: ${{ inputs.is-self-hosted && fromJson(format('["self-hosted", "{0}", "X64"]', inputs.runs-on)) || inputs.runs-on }}
+    outputs:
+      is-released: ${{ steps.release.outputs.release_created }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+
+  deploy:
+    if: ${{ always() && (!inputs.needs-release || needs.release.outputs.is-released)}}
+    needs: [release]
+    runs-on: ${{ inputs.is-self-hosted && fromJson(format('["self-hosted", "{0}", "X64"]', inputs.runs-on)) || inputs.runs-on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./actions/setup-yarn
+        with:
+          node-version: ${{ inputs.node-version }}
+      - uses: ./actions/setup-env
+        with:
+          npm-registry: ${{ inputs.npm-registry }}
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets[inputs.npm-token-key] }}
+      - uses: ./actions/yarn-build
+        with:
+          project-type: singlerepo
+      - uses: ./actions/yarn-publish
+        with:
+          project-type: singlerepo

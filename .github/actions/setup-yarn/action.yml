@@ -1,0 +1,20 @@
+name: Setup Yarn environment
+description: Setup and configure Yarn project environment.
+
+inputs:
+  node-version:
+    required: false
+    default: "20.x"
+    description: Which node.js version will be used.
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+    - run: corepack enable
+      shell: bash
+    - uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: yarn

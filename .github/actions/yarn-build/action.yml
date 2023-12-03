@@ -1,0 +1,19 @@
+name: Build Yarn project
+description: Build projct content using Yarn.
+
+inputs:
+  project-type:
+    required: false
+    default: singlerepo
+    description: Is `monorepo` or `singlerepo` project.
+runs:
+  using: composite
+  steps:
+    - run: yarn install --immutable --inline-builds
+      shell: bash
+    - run: yarn workspaces foreach --all --topological-dev run build
+      shell: bash
+      if: inputs.project-type == 'monorepo'
+    - run: yarn build
+      shell: bash
+      if: inputs.project-type == 'singlerepo'

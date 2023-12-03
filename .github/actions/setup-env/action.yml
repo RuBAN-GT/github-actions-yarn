@@ -1,0 +1,15 @@
+name: Setup Yarn publish configuration
+description: Setup and configure Yarn publish configuration.
+
+inputs:
+  npm-registry:
+    required: false
+    default: https://npm.pkg.github.com
+    description: Private NPM registry.
+runs:
+  using: composite
+  steps:
+    - run: yarn config set npmPublishRegistry '${{ inputs.npm-registry }}'
+      shell: bash
+    - run: yarn config set 'npmRegistries["${{ inputs.npm-registry }}"].npmAuthToken' $NPM_AUTH_TOKEN
+      shell: bash
