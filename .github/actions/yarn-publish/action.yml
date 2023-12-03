@@ -9,7 +9,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: yarn workspaces foreach --topological-dev --since='HEAD~1' npm publish --tolerate-republish
+    - run: yarn workspaces foreach --topological-dev --no-private --since='HEAD~1' npm publish --tolerate-republish
       shell: bash
       if: inputs.project-type == 'monorepo'
     - run: yarn npm publish --tolerate-republish
