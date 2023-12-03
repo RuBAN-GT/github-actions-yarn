@@ -9,8 +9,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: yarn install --immutable --inline-builds
-      shell: bash
     - run: yarn workspaces foreach --topological-dev --since='HEAD~1' npm publish --tolerate-republish
       shell: bash
       if: inputs.project-type == 'monorepo'
