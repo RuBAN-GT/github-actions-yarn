@@ -87,7 +87,7 @@ on: [push, pull_request]
 
 jobs:
   deploy:
-    uses: RuBAN-GT/github-actions-yarn/workflows/yarn.monorepo.yml@main
+    uses: RuBAN-GT/github-actions-yarn/workflows/yarn.monorepo.yml@master
     with:
       node-version: "18.x"
 ```
