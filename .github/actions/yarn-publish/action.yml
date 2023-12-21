@@ -12,6 +12,12 @@ runs:
     - run: yarn workspaces foreach --topological-dev --no-private --since='HEAD~1' npm publish --tolerate-republish
       shell: bash
       if: inputs.project-type == 'monorepo'
-    - run: yarn npm publish --tolerate-republish
+    - run: |
+        if [ -f "./dist/package.json" ]; then
+          touch ./dist/yarn.lock
+          cd ./dist
+          yarn install
+        fi
+        yarn npm publish --tolerate-republish
       shell: bash
       if: inputs.project-type == 'singlerepo'
