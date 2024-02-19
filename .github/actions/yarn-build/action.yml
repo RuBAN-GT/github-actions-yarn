@@ -11,7 +11,7 @@ runs:
   steps:
     - run: yarn install --immutable --inline-builds
       shell: bash
-    - run: yarn workspaces foreach --all --topological-dev run build
+    - run: yarn workspaces foreach --all --topological-dev --no-private run build
       shell: bash
       if: inputs.project-type == 'monorepo'
     - run: yarn build
