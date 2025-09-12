@@ -29,5 +29,5 @@ runs:
       run: yarn config set 'npmScopes.${{ inputs.scope }}.npmRegistryServer' '${{ inputs.npm-registry }}'
       shell: bash
     - if: ${{ inputs.scope != '' }}
-      run: yarn config set 'npmScopes.${{ inputs.scope }}.npmAuthToken' $NPM_AUTH_TOKEN'
+      run: yarn config set 'npmScopes.${{ inputs.scope }}.npmAuthToken' $NPM_AUTH_TOKEN
       shell: bash
