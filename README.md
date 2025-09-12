@@ -10,6 +10,8 @@ The repository provides utils helping to organize your project GitHub actions en
 - **Description**: Setup and configure Yarn publish configuration.
 - **Inputs**:
   - `npm-registry`: Private NPM registry URL (default: `https://npm.pkg.github.com`).
+  - `scope`: NPM scope for the registry (default: `""`).
+  - `is-publish-registry`: If `true`, sets the publish registry to the provided `npm-registry` (default: `false`).
 - **Example**:
 
 ```yml

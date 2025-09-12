@@ -2,6 +2,14 @@ name: Setup Yarn publish configuration
 description: Setup and configure Yarn publish configuration.
 
 inputs:
+  scope:
+    required: false
+    default: ""
+    description: NPM scope.
+  is-publish-registry:
+    required: false
+    default: "true"
+    description: Whether to set the publish registry.
   npm-registry:
     required: false
     default: https://npm.pkg.github.com
@@ -9,7 +17,17 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: yarn config set npmPublishRegistry '${{ inputs.npm-registry }}'
+    - if: ${{ inputs.is-publish-registry == 'true' }}
+      run: yarn config set npmPublishRegistry '${{ inputs.npm-registry }}'
       shell: bash
-    - run: yarn config set 'npmRegistries["${{ inputs.npm-registry }}"].npmAuthToken' $NPM_AUTH_TOKEN
+
+    - if: ${{ inputs.scope == '' }}
+      run: yarn config set 'npmRegistries["${{ inputs.npm-registry }}"].npmAuthToken' $NPM_AUTH_TOKEN
+      shell: bash
+
+    - if: ${{ inputs.scope != '' }}
+      run: yarn config set 'npmScopes.${{ inputs.scope }}.npmRegistryServer' '${{ inputs.npm-registry }}'
+      shell: bash
+    - if: ${{ inputs.scope != '' }}
+      run: yarn config set 'npmScopes.${{ inputs.scope }}.npmAuthToken' $NPM_AUTH_TOKEN'
       shell: bash
